@@ -91,3 +91,7 @@ The app decodes current conditions only. It skips forecast sections and most of 
 ## Disclaimer
 
 METAR Reader is for general information only. **Do not use it for flight planning or other decisions where safety is at stake.** Use official aviation weather sources instead.
+
+## License
+
+Released under the [MIT License](LICENSE).
