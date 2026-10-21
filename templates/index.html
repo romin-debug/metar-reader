@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if report %}{{ report.station }} weather · {% endif %}METAR Reader</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main>
+    <header>
+      <h1><a href="{{ url_for('index') }}">METAR Reader</a></h1>
+      <p class="tagline">Airport weather reports, translated into plain English.</p>
+    </header>
+
+    <form action="{{ url_for('index') }}" method="get" class="search">
+      <label for="code" class="visually-hidden">Airport code</label>
+      <input id="code" name="code" type="text" value="{{ query }}" placeholder="Airport code, e.g. JFK or EGLL"
+             maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" required autofocus>
+      <button type="submit">Get weather</button>
+    </form>
+
+    <p class="examples">
+      Try:
+      {% for code in examples %}<a href="{{ url_for('index', code=code) }}">{{ code }}</a>{% endfor %}
+    </p>
+
+    {% if error %}
+      <div class="card error" role="alert">{{ error }}</div>
+    {% endif %}
+
+    {% if report %}
+      <section class="card report">
+        <div class="station">
+          <span class="code">{{ report.station }}</span>
+          {% if report.name %}<span class="name">{{ report.name }}</span>{% endif %}
+        </div>
+
+        <div class="headline">
+          <span class="icon" aria-hidden="true">{{ report.icon }}</span>
+          <div>
+            {% if report.temp_f is defined %}<div class="temp">{{ report.temp_f | round | int }}°F</div>{% endif %}
+            <p class="summary">{{ report.summary }}</p>
+          </div>
+        </div>
+
+        <dl class="details">
+          {% for label, value in report.details %}
+            <div><dt>{{ label }}</dt><dd>{{ value }}</dd></div>
+          {% endfor %}
+        </dl>
+
+        <details class="raw">
+          <summary>Original METAR</summary>
+          <code>{{ report.raw }}</code>
+        </details>
+      </section>
+    {% endif %}
+
+    <footer>
+      Data from <a href="https://aviationweather.gov" target="_blank" rel="noopener">aviationweather.gov</a>.
+      Not for flight planning.
+    </footer>
+  </main>
+</body>
+</html>
