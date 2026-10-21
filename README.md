@@ -74,11 +74,36 @@ For a 3-letter code, the app tries the US (`K`), Alaska/Hawaii (`P`) and Canadia
 
 ## Running the tests
 
+The tests use [pytest](https://pytest.org), which `requirements.txt` installs. Run them from the project folder:
+
 ```bash
-python -m pytest
+python -m pytest                          # all tests
+python -m pytest tests/test_app.py        # just the web app tests
+python -m pytest "tests/test_app.py::test_mock_metar_summary[dense-fog]"   # a single test
 ```
 
-The tests don't connect to the internet, because calls to the weather service are replaced with sample data.
+There are two test files:
+
+- **`tests/test_metar_decoder.py`** tests the decoder by itself: weather phrases like `-SHRA` → "light rain showers", visibility formats, compass directions, and handling of unusual input.
+- **`tests/test_app.py`** tests the whole web app with mock METAR readings. It checks that:
+  - each mock report produces the correct plain-English summary
+  - the result page shows the right details
+  - airport codes are cleaned up and expanded correctly
+  - unknown airports, service outages and bad data show friendly error messages
+
+The tests never connect to the internet. In `tests/test_app.py`, the call to aviationweather.gov is replaced with a mock that returns a canned response, so the tests are fast and give the same results every time.
+
+### Adding a weather case
+
+To check how a new METAR is interpreted, add an entry to `WEATHER_CASES` in `tests/test_app.py`: the raw report and the summary sentence you expect.
+
+```python
+pytest.param(
+    "METAR KSFO 211056Z 00000KT 1/4SM FG VV002 12/12 A3001",
+    "Fog, 54°F (12°C), calm winds, visibility 1/4 mile.",
+    id="dense-fog",
+),
+```
 
 ## How it works
 

@@ -187,7 +187,7 @@ def format_visibility(token_mod, value_text, miles):
         return f"More than {value_text} miles"
     if token_mod == "M":
         return f"Less than {value_text} mile{'s' if miles > 1 else ''}"
-    return f"{value_text} mile{'s' if miles != 1 else ''}"
+    return f"{value_text} mile{'s' if miles > 1 else ''}"
 
 
 def visibility_quality(miles):
